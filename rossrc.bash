@@ -15,6 +15,14 @@ rossrc() {
         return 0
     }
 
+    is_workspace() {
+        local ws_dir="$1"
+        if [ -d "$ws_dir/.catkin_tools" ]; then
+            return 0
+        fi
+        return 1
+    }
+
     # Source global ROS setup if not already sourced
     # TODO: Make sourcing the global env a configurable function to make this tool more generic
     # (e.g. if not global_env() then global_env_default())
@@ -33,7 +41,7 @@ rossrc() {
     # Walk up the directory tree to find workspace root
     # TODO: Remove while loop, just cut path after _ws
     while [ "$ws_dir" != "/" ]; do
-        if [ ! -d "$ws_dir/.catkin_tools" ]; then
+        if ! is_workspace "$ws_dir"; then
             ws_dir=$(dirname "$ws_dir")
             continue
         fi
