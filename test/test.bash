@@ -11,8 +11,11 @@ trap '((fail_count++))' ERR
 test_setup() {
     TEST_DIR=$(mktemp -d)
 
-
     source "$(dirname "${BASH_SOURCE[0]}")/rossrc.test.bash"
+}
+
+cleanup() {
+    rm -rf "$TEST_DIR"
 }
 
 test_outside_of_workspace() {
@@ -68,6 +71,8 @@ main() {
 
     run_test_case "rossrc outside of workspace" test_outside_of_workspace
     run_test_case "rossrc inside a workspace" test_inside_of_actual_workspace
+
+    cleanup
 
     print_test_summary "$fail_count"
 

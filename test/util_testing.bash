@@ -42,7 +42,6 @@ print_header() {
 
 print_test_summary() {
     local fail_count="$1"
-    rm -rf "$TEST_DIR"  # Cleanup
     echo ""
     echo "=================="
     echo " 🔍 R E S U L T S"
