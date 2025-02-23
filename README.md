@@ -18,11 +18,12 @@ This can significantly reduce Bash startup time if you work with large ROS insta
 
 ## 🚀 Usage
 
-Whenever you want to source the ROS environment, simply run the `rossrc` command.
-If you are already in a workspace, it will source the workspace environment.
-If you sourced the cd hook, you actually don't need to do anything, simple `cd` into your workspace and the environment will be sourced automatically.
+Run `rossrc` if you need ROS commands.
+If you are in a workspace, it will source that one too.
+To force re-sourcing of the workspace (e.g. after adding new packages), use the `-f` or `--force` flag.
+That's it!*
 
-To force re-sourcing of the workspace (e.g. after adding new packages), use the `-f` or `--force` option.
+*Unless you installed the `cd` hook. In that case you don't really have to do anything.
 
 ## ⚡️ Assumptions
 
