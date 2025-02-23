@@ -1,12 +1,24 @@
 run_test_case() {
-    local test_name="$1"
+    local test_case_name="$1"
     shift
     echo "--------------------------------"
-    echo "🔹 Running test: $test_name..."
+    echo "🔹 Running test: $test_case_name..."
     (
+        fail_count=0
+        trap '((fail_count++))' ERR
         "$@" 
+        return "$fail_count"
     )
-    echo "--------------------------------"
+    fail_count="$?"
+    if [ "$fail_count" -eq 0 ]; then
+        echo "✅ $test_case_name passed!"
+        echo "--------------------------------"
+        return 0
+    else
+        echo "❌ $test_case_name failed!"
+        echo "--------------------------------"
+        return 1
+    fi
 }
 
 expect_unset() {
@@ -50,9 +62,9 @@ print_test_summary() {
     if [ "$fail_count" -eq 0 ]; then
         echo "✅ All tests passed!"
     elif [ "$fail_count" -eq 1 ]; then
-        echo "❌ $fail_count test failed!"
+        echo "❌ $fail_count test case failed!"
     else
-        echo "❌ $fail_count tests failed!"
+        echo "❌ $fail_count tests cases failed!"
     fi
     echo ""
     echo "=================="

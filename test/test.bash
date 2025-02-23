@@ -4,10 +4,6 @@
 
 source "$(dirname "${BASH_SOURCE[0]}")/util_testing.bash"
 
-# Automatically count failures when a command returns non-zero
-fail_count=0
-trap '((fail_count++))' ERR
-
 test_setup() {
     TEST_DIR=$(mktemp -d)
 
@@ -19,6 +15,9 @@ cleanup() {
 }
 
 test_outside_of_workspace() {
+    fail_count=0
+    trap '((fail_count++))' ERR
+
     IS_NOT_A_WORKSPACE_DIR="$TEST_DIR/test_not_ws"
     mkdir -p "$IS_NOT_A_WORKSPACE_DIR/src"
 
@@ -32,9 +31,14 @@ test_outside_of_workspace() {
     expect_equal "ROS_DISTRO" "testora" "The global environment should be sourced with the correct ROS distro"
     expect_unset "ROS_WORKSPACE" "ROS_WORKSPACE should not be set when not in a workspace"
     expect_unset "ROS_SETUP_FILE" "ROS_SETUP_FILE should not be set when not in a workspace"
+
+    return "$fail_count"
 }
 
 test_inside_of_actual_workspace() {
+    fail_count=0
+    trap '((fail_count++))' ERR
+
     IS_A_WORKSPACE_DIR="$TEST_DIR/test_ws"
     mkdir -p "$IS_A_WORKSPACE_DIR/.catkin_tools/profiles"
     echo "active: debug" > "$IS_A_WORKSPACE_DIR/.catkin_tools/profiles/profiles.yaml"
@@ -62,9 +66,14 @@ test_inside_of_actual_workspace() {
     expect_equal "ROS_WORKSPACE" "$IS_A_WORKSPACE_DIR" "ROS_WORKSPACE should be set to the current workspace"
     expect_equal "ROS_SETUP_FILE" "$IS_A_WORKSPACE_DIR/devel/setup.bash" "ROS_SETUP_FILE should be set to the current workspace's setup.bash"
     expect_equal "SOURCED_DEVEL_SETUP" "1" "The setup bash should have been sourced successfully"
+
+    return "$fail_count"
 }
 
 main() {
+    fail_count=0
+    trap '((fail_count++))' ERR
+
     print_header
 
     test_setup
