@@ -1,3 +1,13 @@
+if ! declare -f __rossrc_is_within_workspace_heuristic > /dev/null; then
+    __rossrc_is_within_workspace_heuristic() {
+        local dir="$1"
+        if [[ "$dir" != *_ws* ]]; then
+            return 1
+        fi
+        return 0
+    }
+fi
+
 #TODO: What if workspace packages changes?
 rossrc() {
     if ! declare -f __rossrc_source_global_ros_env > /dev/null; then
@@ -8,16 +18,6 @@ rossrc() {
                 exit
             fi
             source "$global_setup_file"
-        }
-    fi
-
-    if ! declare -f __rossrc_is_within_workspace_heuristic > /dev/null; then
-        __rossrc_is_within_workspace_heuristic() {
-            local dir="$1"
-            if [[ "$dir" != *_ws* ]]; then
-                return 1
-            fi
-            return 0
         }
     fi
 
