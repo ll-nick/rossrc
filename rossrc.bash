@@ -49,6 +49,7 @@ rossrc() {
 
         # Store the new workspace path
         export ROS_SETUP_BASH="$setup_file"
+        export ROS_WORKSPACE="$ws_dir"
         if [ -f "$setup_file" ]; then
             echo "Sourcing workspace: $setup_file (profile: $active_profile)"
             source "$setup_file"
