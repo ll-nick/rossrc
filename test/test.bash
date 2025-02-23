@@ -25,6 +25,24 @@ expect_equal() {
     return 0
 }
 
+test_summary() {
+    local fail_count="$1"
+    rm -rf "$TEST_DIR"  # Cleanup
+    echo ""
+    echo "==============="
+    echo " R E S U L T S"
+    echo "==============="
+    echo ""
+    if [ "$fail_count" -eq 0 ]; then
+        echo "✅ All tests passed!"
+    elif [ "$fail_count" -eq 1 ]; then
+        echo "❌ $fail_count test failed!"
+    else
+        echo "❌ $fail_count tests failed!"
+    fi
+}
+
+
 TEST_DIR=$(mktemp -d)
 
 IS_A_WORKSPACE_DIR="$TEST_DIR/test_ws"
@@ -68,21 +86,10 @@ expect_equal "ROS_WORKSPACE" "$IS_A_WORKSPACE_DIR" "ROS_WORKSPACE should be set 
 expect_equal "ROS_SETUP_FILE" "$IS_A_WORKSPACE_DIR/devel/setup.bash" "ROS_SETUP_FILE should be set to the current workspace's setup.bash"
 expect_equal "SOURCED_DEVEL_SETUP" "1" "The setup bash should have been sourced successfully"
 
+test_summary "$fail_count"
 
-rm -rf "$TEST_DIR"  # Cleanup
-echo ""
-echo "==============="
-echo " R E S U L T S"
-echo "==============="
-echo ""
 if [ "$fail_count" -eq 0 ]; then
-    echo "✅ All tests passed!"
     exit 0
-elif [ "$fail_count" -eq 1 ]; then
-    echo "❌ $fail_count test failed!"
-    exit 1
 else
-    echo "❌ $fail_count tests failed!"
     exit 1
 fi
-
