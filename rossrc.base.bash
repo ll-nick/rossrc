@@ -191,11 +191,12 @@ rossrc() {
         if [[ $force_source -eq 0 && "$ROS_SETUP_FILE" == "$setup_file" ]]; then
             return
         fi
-        # If the workspace changed, re-source the global setup to avoid workspace overlaying
+        # Warn when overlaying workspaces
         if [ -n "$ROS_WORKSPACE" ] && [ "$ROS_WORKSPACE" != "$ws_root" ]; then
-            echo "Changing workspace from $ROS_WORKSPACE to $ws_root"
-            echo "Sourcing global ROS environment to avoid workspace overlaying..."
-            __rossrc_source_global_ros_env
+            echo -e "\e[33m\n" \
+                "Warning: Sourcing $ws_root will overlay $ROS_WORKSPACE.\n" \
+                "         Open a new terminal if that's not what you want." \
+                "\e[0m\n"
         fi
 
         if [ -f "$setup_file" ]; then
