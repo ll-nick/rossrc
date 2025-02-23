@@ -1,4 +1,5 @@
 #TODO: Split into smaller functions
+#TODO: What if workspace packages changes?
 rossrc() {
     # Source global ROS setup if not already sourced
     # TODO: Make sourcing the global env a configurable function to make this tool more generic
