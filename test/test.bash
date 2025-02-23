@@ -168,6 +168,38 @@ test_multiple_workspaces() {
     return "$fail_count"
 }
 
+test_cd_hook() {
+    fail_count=0
+    trap '((fail_count++))' ERR
+
+    source "$(dirname "${BASH_SOURCE[0]}")/../cd_hook.bash"
+
+    # Prepare base workspace structure
+    WORKSPACE="$TEST_DIR/cd_hook_ws"
+    mkdir -p "$WORKSPACE/.catkin_tools/profiles"
+    echo "active: release" > "$WORKSPACE/.catkin_tools/profiles/profiles.yaml"
+    mkdir -p "$WORKSPACE/devel"
+    DEVEL_SOURCE_COUNTER=0
+    echo "export DEVEL_SOURCE_COUNTER=$((DEVEL_SOURCE_COUNTER + 1))" > "$WORKSPACE/devel/setup.bash"
+
+    # Outside of workspace
+    expect_unset "ROS_DISTRO" "Global environment should not yet be sourced"
+    expect_unset "ROS_WORKSPACE" "ROS_WORKSPACE should not be set when not in a workspace"
+    expect_unset "ROS_SETUP_FILE" "ROS_SETUP_FILE should not be set when not in a workspace"
+    expect_equal "GLOBAL_SOURCE_COUNTER" "0" "The global environment should not have been sourced"
+    expect_equal "DEVEL_SOURCE_COUNTER" "0" "The setup bash should not have been sourced"
+
+    # No need to run rossrc with the cd hook
+    cd "$WORKSPACE" || return
+    expect_equal "ROS_DISTRO" "testora" "The global environment should be sourced with the correct ROS distro"
+    expect_equal "GLOBAL_SOURCE_COUNTER" "1" "The global environment should have been sourced once"
+    expect_equal "ROS_WORKSPACE" "$WORKSPACE" "ROS_WORKSPACE should be set to the current workspace"
+    expect_equal "ROS_SETUP_FILE" "$WORKSPACE/devel/setup.bash" "ROS_SETUP_FILE should be set to the current workspace's setup.bash"
+    expect_equal "DEVEL_SOURCE_COUNTER" "1" "The setup bash should have been sourced"
+
+    return "$fail_count"
+}
+
 main() {
     failed_test_cases=0
     trap '((failed_test_cases++))' ERR
@@ -179,6 +211,7 @@ main() {
     run_test_case "rossrc outside of workspace" test_outside_of_workspace
     run_test_case "rossrc inside a workspace" test_switching_profiles
     run_test_case "rossrc with multiple workspaces" test_multiple_workspaces
+    run_test_case "auto sourcing using cd hook" test_cd_hook
 
     cleanup
 
