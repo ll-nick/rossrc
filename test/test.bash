@@ -51,7 +51,6 @@ test_switching_profiles() {
     # Prepare base workspace structure
     IS_A_WORKSPACE_DIR="$TEST_DIR/test_ws"
     mkdir -p "$IS_A_WORKSPACE_DIR/.catkin_tools/profiles"
-    mkdir -p "$IS_A_WORKSPACE_DIR/src"
     mkdir -p "$IS_A_WORKSPACE_DIR/some_other_dir"
 
     # Prepare devel dir
@@ -84,7 +83,8 @@ test_switching_profiles() {
     expect_equal "DEVEL_SOURCE_COUNTER" "1" "The setup bash should have been sourced successfully"
     expect_equal "DEVEL_DEBUG_SOURCE_COUNTER" "0" "The debug setup bash should not have been sourced"
 
-    # Sourcing again shouldn't change anything
+    # Sourcing again shouldn't change anything, even when in a different directory
+    cd "$IS_A_WORKSPACE_DIR/some_other_dir" || return
     rossrc
     expect_equal "ROS_DISTRO" "testora" "The global environment should be sourced with the correct ROS distro"
     expect_equal "GLOBAL_SOURCE_COUNTER" "1" "The global workspace should not be sourced again"
@@ -105,6 +105,8 @@ test_switching_profiles() {
     expect_equal "DEVEL_DEBUG_SOURCE_COUNTER" "1" "The setup bash should have been sourced successfully"
 
     # Sourcing again shouldn't change anything
+    # Sourcing again shouldn't change anything, even when in a different directory
+    cd "$IS_A_WORKSPACE_DIR/some_other_dir" || return
     rossrc
     expect_equal "ROS_DISTRO" "testora" "The global environment should be sourced with the correct ROS distro"
     expect_equal "GLOBAL_SOURCE_COUNTER" "1" "The global workspace should not be sourced again"
