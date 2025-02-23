@@ -1,12 +1,12 @@
 #TODO: Split into smaller functions
 #TODO: What if workspace packages changes?
 rossrc() {
-    source_global_ros_env() {
+    __rossrc_source_global_ros_env() {
         source /opt/mrtsoftware/setup.bash
         source /opt/mrtros/setup.bash
     }
 
-    is_within_workspace_heuristic() {
+    __rossrc_is_within_workspace_heuristic() {
         local dir="$1"
         if [[ "$dir" != *_ws* ]]; then
             return 1
@@ -14,7 +14,7 @@ rossrc() {
         return 0
     }
 
-    is_workspace_root() {
+    __rossrc_is_workspace_root() {
         local dir="$1"
         if [ -d "$dir/.catkin_tools" ]; then
             return 0
@@ -22,10 +22,10 @@ rossrc() {
         return 1
     }
 
-    get_workspace_root() {
+    __rossrc_get_workspace_root() {
         local dir="$1"
         while [ "$dir" != "/" ]; do
-            if ! is_workspace_root "$dir"; then
+            if ! __rossrc_is_workspace_root "$dir"; then
                 dir=$(dirname "$dir")
                 continue
             fi
@@ -35,7 +35,7 @@ rossrc() {
         echo ""  # Return an empty string if no workspace is found
     }
 
-    get_devel_dir() {
+    __rossrc_get_devel_dir() {
         local ws_root="$1"
         local profile_file="$ws_root/.catkin_tools/profiles/profiles.yaml"
         local devel_dir="devel"
@@ -50,7 +50,7 @@ rossrc() {
         echo "$devel_dir"
     }
 
-    get_setup_file() {
+    __rosscr_get_setup_file() {
         local ws_root="$1"
         local devel_dir="$2"
         echo "$ws_root/$devel_dir/setup.bash"
@@ -61,18 +61,18 @@ rossrc() {
     # (e.g. if not global_env() then global_env_default())
     if [ -z "$ROS_DISTRO" ]; then
         echo "Sourcing global environment..."
-        source_global_ros_env
+        __rossrc_source_global_ros_env
     fi
 
     # If heuristic is not satisfied, we can return early
-    if ! is_within_workspace_heuristic "$(pwd)"; then
+    if ! __rossrc_is_within_workspace_heuristic "$(pwd)"; then
         return
     fi
 
     # Walk up the directory tree to find workspace root
     # TODO: Remove while loop, just cut path after _ws
     local ws_root
-    ws_root=$(get_workspace_root "$(pwd)")
+    ws_root=$(__rossrc_get_workspace_root "$(pwd)")
     if [ -z "$ws_root" ]; then
         return
     fi
@@ -80,12 +80,12 @@ rossrc() {
     # Determine the active profile
     # TODO: Make the devel dir function configurable
     local devel_dir
-    devel_dir=$(get_devel_dir "$ws_root")
+    devel_dir=$(__rossrc_get_devel_dir "$ws_root")
 
     # Source the correct setup file
     # TODO: If the workspace changed, re-source the global setup (but not if only the profile changed)
     local setup_file
-    setup_file=$(get_setup_file "$ws_root" "$devel_dir")
+    setup_file=$(__rosscr_get_setup_file "$ws_root" "$devel_dir")
 
     # Avoid re-sourcing if already in the same workspace
     if [ "$ROS_SETUP_FILE" == "$setup_file" ]; then
