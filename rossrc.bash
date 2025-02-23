@@ -93,10 +93,15 @@ rossrc() {
         local setup_file
         setup_file=$(__rosscr_get_setup_file "$setup_script_dir")
 
-        # Avoid re-sourcing if already in the same workspace
-        # TODO: If the workspace changed, re-source the global setup (but not if only the profile changed)
+        # No need to re-source if the setup file is already sourced
         if [ "$ROS_SETUP_FILE" == "$setup_file" ]; then
             return
+        fi
+        # If the workspace changed, re-source the global setup to avoid workspace overlaying
+        if [ ! "$ROS_WORKSPACE" == "$ws_root" ]; then
+            echo "Changing workspace from $ROS_WORKSPACE to $ws_root"
+            echo "Sourcing global ROS environment to avoid workspace overlaying..."
+            __rossrc_source_global_ros_env
         fi
 
         # Try sourcing the setup file
