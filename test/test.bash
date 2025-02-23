@@ -66,7 +66,7 @@ print_header
 test_setup
 
 run_test_case "rossrc outside of workspace" test_outside_of_workspace
-run_test_case "rosscr insdie a workspace" test_inside_of_actual_workspace
+run_test_case "rossrc inside a workspace" test_inside_of_actual_workspace
 
 print_test_summary "$fail_count"
 
