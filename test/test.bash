@@ -2,28 +2,32 @@
 
 source "$(dirname "${BASH_SOURCE[0]}")/util_testing.bash"
 
-TEST_DIR=$(mktemp -d)
-
-IS_A_WORKSPACE_DIR="$TEST_DIR/test_ws"
-mkdir -p "$IS_A_WORKSPACE_DIR/.catkin_tools/profiles"
-echo "active: debug" > "$IS_A_WORKSPACE_DIR/.catkin_tools/profiles/profiles.yaml"
-mkdir -p "$IS_A_WORKSPACE_DIR/devel"
-echo "export SOURCED_DEVEL_SETUP=1" > "$IS_A_WORKSPACE_DIR/devel/setup.bash"
-mkdir -p "$IS_A_WORKSPACE_DIR/devel_debug"
-echo "export SOURCED_DEVEL_DEBUG_SETUP=1" > "$IS_A_WORKSPACE_DIR/devel_debug/setup.bash"
-mkdir -p "$IS_A_WORKSPACE_DIR/src"
-mkdir -p "$IS_A_WORKSPACE_DIR/some_other_dir"
-
-IS_NOT_A_WORKSPACE_DIR="$TEST_DIR/test_not_ws"
-mkdir -p "$IS_NOT_A_WORKSPACE_DIR/src"
-
 # Automatically count failures when a command returns non-zero
 fail_count=0
 trap '((FAIL_COUNT++))' ERR
 
+test_setup() {
+    TEST_DIR=$(mktemp -d)
+
+    IS_A_WORKSPACE_DIR="$TEST_DIR/test_ws"
+    mkdir -p "$IS_A_WORKSPACE_DIR/.catkin_tools/profiles"
+    echo "active: debug" > "$IS_A_WORKSPACE_DIR/.catkin_tools/profiles/profiles.yaml"
+    mkdir -p "$IS_A_WORKSPACE_DIR/devel"
+    echo "export SOURCED_DEVEL_SETUP=1" > "$IS_A_WORKSPACE_DIR/devel/setup.bash"
+    mkdir -p "$IS_A_WORKSPACE_DIR/devel_debug"
+    echo "export SOURCED_DEVEL_DEBUG_SETUP=1" > "$IS_A_WORKSPACE_DIR/devel_debug/setup.bash"
+    mkdir -p "$IS_A_WORKSPACE_DIR/src"
+    mkdir -p "$IS_A_WORKSPACE_DIR/some_other_dir"
+
+    IS_NOT_A_WORKSPACE_DIR="$TEST_DIR/test_not_ws"
+    mkdir -p "$IS_NOT_A_WORKSPACE_DIR/src"
+
+    source "$(dirname "${BASH_SOURCE[0]}")/rossrc.test.bash"
+}
+
 echo "== Running tests =="
 
-source "$(dirname "${BASH_SOURCE[0]}")/rossrc.test.bash"
+test_setup
 
 expect_unset "ROS_DISTRO" "Global environment should not yet be sourced"
 
