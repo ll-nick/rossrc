@@ -4,7 +4,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/util_testing.bash"
 
 # Automatically count failures when a command returns non-zero
 fail_count=0
-trap '((FAIL_COUNT++))' ERR
+trap '((fail_count++))' ERR
 
 test_setup() {
     TEST_DIR=$(mktemp -d)
