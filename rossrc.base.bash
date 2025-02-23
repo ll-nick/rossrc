@@ -5,6 +5,7 @@ rossrc() {
             local global_setup_file="/opt/ros/noetic/setup.bash"
             if [ ! -f "$global_setup_file" ]; then
                 echo "No ROS installation found at $global_setup_file"
+                exit
             fi
             source "$global_setup_file"
         }
