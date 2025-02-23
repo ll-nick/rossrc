@@ -43,19 +43,19 @@ rossrc() {
     fi
 
     if ! declare -f __rossrc_get_devel_dir > /dev/null; then
-        __rossrc_get_devel_dir() {
+        __rossrc_get_setup_dir() {
             local ws_root="$1"
             local profile_file="$ws_root/.catkin_tools/profiles/profiles.yaml"
-            local devel_dir="devel"
+            local setup_dir="devel"
 
             if [ -f "$profile_file" ]; then
                 local active_profile
                 active_profile=$(sed 's/active: //' < "$profile_file")
                 if [ "$active_profile" != "release" ]; then
-                    devel_dir="devel_$active_profile"
+                    setup_dir="devel_$active_profile"
                 fi
             fi
-            echo "$devel_dir"
+            echo "$setup_dir"
         }
     fi
 
@@ -68,9 +68,7 @@ rossrc() {
     fi
 
     main() {
-        # Source global ROS setup if not already sourced
-        # TODO: Make sourcing the global env a configurable function to make this tool more generic
-        # (e.g. if not global_env() then global_env_default())
+        # Source the ROS installation if not already done
         if [ -z "$ROS_DISTRO" ]; then
             echo "Sourcing global environment..."
             __rossrc_source_global_ros_env
@@ -81,39 +79,39 @@ rossrc() {
             return
         fi
 
-        # Walk up the directory tree to find workspace root
-        # TODO: Remove while loop, just cut path after _ws
+        # Make sure we are in a workspace and determine the workspace root
         local ws_root
         ws_root=$(__rossrc_get_workspace_root "$(pwd)")
         if [ -z "$ws_root" ]; then
             return
         fi
 
-        # Determine the active profile
-        # TODO: Make the devel dir function configurable
-        local devel_dir
-        devel_dir=$(__rossrc_get_devel_dir "$ws_root")
+        # Determine the directory containing the setup script
+        local setup_script_dir
+        setup_script_dir=$(__rossrc_get_setup_dir "$ws_root")
 
-        # Source the correct setup file
-        # TODO: If the workspace changed, re-source the global setup (but not if only the profile changed)
+        # Determine the path to the setup script
         local setup_file
-        setup_file=$(__rosscr_get_setup_file "$ws_root" "$devel_dir")
+        setup_file=$(__rosscr_get_setup_file "$ws_root" "$setup_script_dir")
 
         # Avoid re-sourcing if already in the same workspace
+        # TODO: If the workspace changed, re-source the global setup (but not if only the profile changed)
         if [ "$ROS_SETUP_FILE" == "$setup_file" ]; then
-            echo "Aldready sourced workspace: $ws_root (profile: $active_profile)"
             return
         fi
 
-        # Store the new workspace path
-        export ROS_SETUP_FILE="$setup_file"
-        export ROS_WORKSPACE="$ws_root"
+        # Try sourcing the setup file
         if [ -f "$setup_file" ]; then
             echo "Sourcing workspace: $setup_file (profile: $active_profile)"
             source "$setup_file"
         else
             echo "No valid setup.bash found for profile ($active_profile)."
+            return
         fi
+
+        # Store the sourced setup file and workspace root
+        export ROS_SETUP_FILE="$setup_file"
+        export ROS_WORKSPACE="$ws_root"
     }
 
     main "$@"
