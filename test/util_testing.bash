@@ -1,3 +1,14 @@
+run_test_case() {
+    local test_name="$1"
+    shift
+    echo "--------------------------------"
+    echo "🔹 Running test: $test_name..."
+    (
+        "$@" 
+    )
+    echo "--------------------------------"
+}
+
 expect_unset() {
     local var_name="$1"
     eval "local var_value=\"\$$var_name\""
