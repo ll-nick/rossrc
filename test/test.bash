@@ -6,6 +6,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/util_testing.bash"
 
 test_setup() {
     TEST_DIR=$(mktemp -d)
+    GLOBAL_SOURCE_COUNTER=0
 
     source "$(dirname "${BASH_SOURCE[0]}")/rossrc.test.bash"
 }

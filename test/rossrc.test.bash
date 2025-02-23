@@ -1,5 +1,6 @@
 __rossrc_source_global_ros_env() {
     export ROS_DISTRO=testora
+    GLOBAL_SOURCE_COUNTER=$((GLOBAL_SOURCE_COUNTER + 1))
 }
 
 __rossrc_get_path_to_setup_dir() {
