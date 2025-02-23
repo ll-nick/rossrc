@@ -1,5 +1,14 @@
 #TODO: Split into smaller functions
 rossrc() {
+    # Source global ROS setup if not already sourced
+    # TODO: Make sourcing the global env a configurable function to make this tool more generic
+    # (e.g. if not global_env() then global_env_default())
+    if [ -z "$ROS_DISTRO" ]; then
+        echo "Sourcing mrtsoftware and mrtros..."
+        source /opt/mrtsoftware/setup.bash
+        source /opt/mrtros/setup.bash
+    fi
+
     ws_dir=$(pwd)
 
     # Not a catkin workspace if not in a directory with _ws in the name
@@ -13,16 +22,6 @@ rossrc() {
         if [ ! -d "$ws_dir/.catkin_tools" ]; then
             ws_dir=$(dirname "$ws_dir")
             continue
-        fi
-
-        # Source global ROS setup if not already sourced
-        # TODO: Source this, even if not in a workspace in case the function was manually invoked
-        # TODO: Make sourcing the global env a configurable function to make this tool more generic
-        # (e.g. if not global_env() then global_env_default())
-        if [ -z "$ROS_DISTRO" ]; then
-            echo "Sourcing mrtsoftware and mrtros..."
-            source /opt/mrtsoftware/setup.bash
-            source /opt/mrtros/setup.bash
         fi
 
         # Determine the active profile
