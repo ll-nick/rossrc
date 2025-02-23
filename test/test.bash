@@ -168,6 +168,39 @@ test_multiple_workspaces() {
     return "$fail_count"
 }
 
+test_force() {
+    fail_count=0
+    trap '((fail_count++))' ERR
+
+    # Prepare base workspace structure
+    WORKSPACE="$TEST_DIR/force_ws"
+    mkdir -p "$WORKSPACE/.catkin_tools/profiles"
+    echo "active: release" > "$WORKSPACE/.catkin_tools/profiles/profiles.yaml"
+    mkdir -p "$WORKSPACE/devel"
+    export DEVEL_SOURCE_COUNTER=0
+    echo "export DEVEL_SOURCE_COUNTER=\$((DEVEL_SOURCE_COUNTER + 1))" > "$WORKSPACE/devel/setup.bash"
+
+    cd "$WORKSPACE" || return
+    rossrc
+
+    expect_equal "ROS_DISTRO" "testora" "The global environment should be sourced with the correct ROS distro"
+    expect_equal "GLOBAL_SOURCE_COUNTER" "1" "The global environment should have been sourced once"
+    expect_equal "ROS_WORKSPACE" "$WORKSPACE" "ROS_WORKSPACE should be set to the current workspace"
+    expect_equal "ROS_SETUP_FILE" "$WORKSPACE/devel/setup.bash" "ROS_SETUP_FILE should be set to the current workspace's setup.bash"
+    expect_equal "DEVEL_SOURCE_COUNTER" "1" "The setup bash should have been sourced"
+
+    # Force sourcing again
+    rossrc --force
+
+    expect_equal "ROS_DISTRO" "testora" "The global environment should be sourced with the correct ROS distro"
+    expect_equal "GLOBAL_SOURCE_COUNTER" "1" "The global environment should have been sourced once"
+    expect_equal "ROS_WORKSPACE" "$WORKSPACE" "ROS_WORKSPACE should be set to the current workspace"
+    expect_equal "ROS_SETUP_FILE" "$WORKSPACE/devel/setup.bash" "ROS_SETUP_FILE should be set to the current workspace's setup.bash"
+    expect_equal "DEVEL_SOURCE_COUNTER" "2" "The setup bash should have been sourced again"
+
+    return "$fail_count"
+}
+
 test_cd_hook() {
     fail_count=0
     trap '((fail_count++))' ERR
@@ -219,6 +252,7 @@ main() {
     run_test_case "rossrc outside of workspace" test_outside_of_workspace
     run_test_case "rossrc inside a workspace" test_switching_profiles
     run_test_case "rossrc with multiple workspaces" test_multiple_workspaces
+    run_test_case "rossrc with --force" test_force
     run_test_case "auto sourcing using cd hook" test_cd_hook
 
     cleanup
