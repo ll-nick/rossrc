@@ -47,6 +47,18 @@ rossrc() {
         }
     fi
 
+    if ! declare -f __rossrc_get_active_profile > /dev/null; then
+        __rossrc_get_active_profile() {
+            local ws_root="$1"
+            local profile_file="$ws_root/.catkin_tools/profiles/profiles.yaml"
+            if [ -f "$profile_file" ]; then
+                local active_profile
+                active_profile=$(grep "active:" "$profile_file" | cut -d' ' -f2)
+                echo "$active_profile"
+            fi
+        }
+    fi
+
     if ! declare -f __rossrc_get_path_to_setup_dir > /dev/null; then
         __rossrc_get_path_to_setup_dir() {
             local ws_root="$1"
@@ -80,6 +92,8 @@ rossrc() {
             return
         fi
 
+        local active_profile
+        active_profile=$(__rossrc_get_active_profile "$ws_root")
         local setup_script_dir
         setup_script_dir=$(__rossrc_get_path_to_setup_dir "$ws_root")
         local setup_file
