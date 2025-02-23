@@ -104,7 +104,6 @@ test_switching_profiles() {
     expect_equal "DEVEL_SOURCE_COUNTER" "1" "The setup bash should not have been sourced again"
     expect_equal "DEVEL_DEBUG_SOURCE_COUNTER" "1" "The setup bash should have been sourced successfully"
 
-    # Sourcing again shouldn't change anything
     # Sourcing again shouldn't change anything, even when in a different directory
     cd "$IS_A_WORKSPACE_DIR/some_other_dir" || return
     rossrc

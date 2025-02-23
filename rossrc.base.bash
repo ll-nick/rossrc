@@ -164,7 +164,7 @@ rossrc() {
 
         # Source the ROS installation if not already done
         if [ -z "$ROS_DISTRO" ]; then
-            echo "Sourcing global environment..."
+            echo "Sourcing ROS installation"
             __rossrc_source_global_ros_env
         fi
 
@@ -202,7 +202,7 @@ rossrc() {
             echo "Sourcing workspace: $ws_root (profile: $active_profile)"
             source "$setup_file"
         else
-            echo "No valid setup.bash found for profile ($active_profile)."
+            echo "No valid setup.bash found in $ws_root for profile ($active_profile)."
             return
         fi
 
