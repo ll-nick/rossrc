@@ -15,19 +15,6 @@ expect_unset() {
     return 0
 }
 
-expect_set() {
-    local var_name="$1"
-    eval "local var_value=\"\$$var_name\""
-    local test_name="$2"
-    if [ -z "$var_value" ]; then
-        echo "❌ $test_name: Expected variable to be set: $var_name"
-        ((FAIL_COUNT++))
-        return 1
-    fi
-    echo "✅ $test_name"
-    return 0
-}
-
 expect_equal() {
     local var_name="$1"
     local expected_value="$2"
