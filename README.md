@@ -9,12 +9,22 @@ The script ensures that the global ROS installation is sourced only when necessa
 This can significantly reduce Bash startup time if you work with large ROS installations.
 
 ## ✨ Features
-- **Minimizes Shell Startup Overhead**: Only sources ROS when required for quick shell startup.
-- **Lightweight Workspace Detection**: Uses heuristics to quickly estimate if the current directory is within a ROS workspace.
-- **Prevents Redundant Sourcing**: Avoids re-sourcing the workspace if it has already been set up.
-- **Supports Customization**: Allows users to override internal functions for custom behavior.
-- **Workspace Switching Handling**: Detects when moving between different workspaces and properly reconfigures the environment.
-- **Automagic**: Source the provided cd hook to automatically source the workspace when changing directories.
+
+- ⏲  **Minimizes Shell Startup Overhead***  
+  Only sources ROS when required for quick shell startup.
+- 🧠 **Prevents Redundant Sourcing**  
+  Avoids re-sourcing the workspace if it has already been set up.
+- 👌 **Simple**  
+  There's just one command to remember: `rossrc`.
+- 🪶 **Lightweight**  
+  Uses a heuristic to only run if necessary.
+- 🔧 **Customizable**  
+  Allows users to override internal functions for custom behavior.
+- 🪄 **Automagic**  
+  Source the provided `cd` hook to automatically source workspaces when changing directories.
+
+*On my machine, sourcing the ROS installation takes roughly 720ms.
+Sourcing this script takes about 2ms.
 
 ## 🚀 Usage
 
