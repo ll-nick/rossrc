@@ -101,6 +101,6 @@ source ~/.rossrc/cd_hook.bash
 ```
 </details>
 
-## License
+## 📃 License
 This project is released under the MIT License.
 
