@@ -88,13 +88,13 @@ rossrc() {
     setup_file=$(get_setup_file "$ws_root" "$devel_dir")
 
     # Avoid re-sourcing if already in the same workspace
-    if [ "$ROS_SETUP_BASH" == "$setup_file" ]; then
+    if [ "$ROS_SETUP_FILE" == "$setup_file" ]; then
         echo "Aldready sourced workspace: $ws_root (profile: $active_profile)"
         return
     fi
 
     # Store the new workspace path
-    export ROS_SETUP_BASH="$setup_file"
+    export ROS_SETUP_FILE="$setup_file"
     export ROS_WORKSPACE="$ws_root"
     if [ -f "$setup_file" ]; then
         echo "Sourcing workspace: $setup_file (profile: $active_profile)"

@@ -74,13 +74,13 @@ rossrc
 expect_set "ROS_DISTRO" "Global environment should be sourced"
 expect_equal "ROS_DISTRO" "noetic" "The global environment should be sourced with the correct ROS distro"
 expect_equal "ROS_WORKSPACE" "$IS_A_WORKSPACE_DIR" "ROS_WORKSPACE should be set to the current workspace"
-expect_equal "ROS_SETUP_BASH" "$IS_A_WORKSPACE_DIR/devel_debug/setup.bash" "ROS_SETUP_BASH should be set to the current workspace's setup.bash"
+expect_equal "ROS_SETUP_FILE" "$IS_A_WORKSPACE_DIR/devel_debug/setup.bash" "ROS_SETUP_FILE should be set to the current workspace's setup.bash"
 expect_equal "SOURCED_DEVEL_DEBUG_SETUP" "1" "The setup bash should have been sourced successfully"
 
 echo "active: release" > "$IS_A_WORKSPACE_DIR/.catkin_tools/profiles/profiles.yaml"
 rossrc
 expect_equal "ROS_WORKSPACE" "$IS_A_WORKSPACE_DIR" "ROS_WORKSPACE should be set to the current workspace"
-expect_equal "ROS_SETUP_BASH" "$IS_A_WORKSPACE_DIR/devel/setup.bash" "ROS_SETUP_BASH should be set to the current workspace's setup.bash"
+expect_equal "ROS_SETUP_FILE" "$IS_A_WORKSPACE_DIR/devel/setup.bash" "ROS_SETUP_FILE should be set to the current workspace's setup.bash"
 expect_equal "SOURCED_DEVEL_SETUP" "1" "The setup bash should have been sourced successfully"
 
 
