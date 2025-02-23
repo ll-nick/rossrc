@@ -6,7 +6,7 @@ run_test_case() {
     (
         fail_count=0
         trap '((fail_count++))' ERR
-        "$@" 
+        "$@"
         return "$fail_count"
     )
     fail_count="$?"
