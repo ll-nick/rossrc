@@ -1,3 +1,15 @@
+#!/bin/bash
+
+# Runs a test case and reports its result.
+#
+# This function executes a given test command in a subshell and tracks failures.
+#
+# Args:
+#   test_case_name: The name of the test case (string).
+#   $@: The command to execute as the test case.
+#
+# Returns:
+#   0 if the test case passes, nonzero otherwise.
 run_test_case() {
     local test_case_name="$1"
     shift
@@ -23,6 +35,16 @@ run_test_case() {
     fi
 }
 
+# Verifies that a given variable is unset or empty.
+#
+# Prints an error message if the variable is set and not empty.
+#
+# Args:
+#   var_name: The name of the variable to check (string).
+#   test_name: The name of the test (string).
+#
+# Returns:
+#   0 if the variable is unset or empty, 1 otherwise.
 expect_unset() {
     local var_name="$1"
     eval "local var_value=\"\$$var_name\""
@@ -34,6 +56,17 @@ expect_unset() {
     return 0
 }
 
+# Checks whether a variable's value matches an expected value.
+#
+# Prints an error message if the variable does not match the expected value.
+#
+# Args:
+#   var_name: The name of the variable to check (string).
+#   expected_value: The expected value of the variable (string).
+#   test_name: The name of the test (string).
+#
+# Returns:
+#   0 if the variable matches the expected value, 1 otherwise.
 expect_equal() {
     local var_name="$1"
     local expected_value="$2"
@@ -54,6 +87,10 @@ print_header() {
     echo ""
 }
 
+# Prints a summary of the test results.
+#
+# Args:
+#   fail_count: The number of failed test cases (integer).
 print_test_summary() {
     local fail_count="$1"
     echo ""

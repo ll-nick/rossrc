@@ -1,4 +1,43 @@
+#!/bin/bash
+
+# rossrc - A Bash utility for intelligently sourcing ROS environments.
+#
+# This script provides a mechanism to automatically source the correct ROS
+# environment and workspace setup. It ensures that the global ROS installation
+# is sourced when needed and selects the appropriate workspace environment if
+# within a recognized workspace.
+#
+# To keep overhead minimal, the script uses heuristics to determine if the
+# current directory is within a workspace. If the heuristic is not satisfied,
+# the script will not attempt to source the workspace. The script also avoids
+# re-sourcing the workspace if the setup file is already sourced.
+#
+# To keep the script generic and reusable, it provides a set of functions that
+# can be overridden or extended. They are prefixed with "__rossrc_" to indicate
+# that they are internal functions and to not clutter the global namespace.
+#
+# You should not source this script directly, unless you implemented custom
+# overrides. Instead, source the file matching the ROS distribution you are using.
+# For example, source "rossrc.noetic.bash" for ROS Noetic.
+#
+# Usage:
+#   source rossrc [OPTIONS]
+#
+# Options:
+#   -f, --force    Force re-sourcing the workspace even if already sourced.
+#   --help         Display usage information.
+
+# Check if the function is already defined. If not, define a default implementation.
+# This allows custom implementations to override the default behavior and you'll
+# see this pattern throughout the script.
 if ! declare -f __rossrc_is_within_workspace_heuristic > /dev/null; then
+    # Determines if the current directory is within a workspace based on heuristics.
+    #
+    # This function is exposed outside of rossrc to allow the cd hook to use it.
+    # Args:
+    #   dir (string): The directory to check.
+    # Returns:
+    #   0 if inside a workspace, 1 otherwise.
     __rossrc_is_within_workspace_heuristic() {
         local dir="$1"
         if [[ "$dir" != *_ws* ]]; then
@@ -9,7 +48,9 @@ if ! declare -f __rossrc_is_within_workspace_heuristic > /dev/null; then
 fi
 
 rossrc() {
+
     if ! declare -f __rossrc_source_global_ros_env > /dev/null; then
+        # Sources the global ROS installation.
         __rossrc_source_global_ros_env() {
             local global_setup_file="/opt/ros/noetic/setup.bash"
             if [ ! -f "$global_setup_file" ]; then
@@ -21,6 +62,11 @@ rossrc() {
     fi
 
     if ! declare -f __rossrc_is_workspace_root > /dev/null; then
+        # Checks if a directory is a catkin workspace root.
+        # Args:
+        #   dir (string): The directory to check.
+        # Returns:
+        #   0 if it is a workspace root, 1 otherwise.
         __rossrc_is_workspace_root() {
             local dir="$1"
             if [ -d "$dir/.catkin_tools" ]; then
@@ -31,6 +77,11 @@ rossrc() {
     fi
 
     if ! declare -f __rossrc_get_workspace_root > /dev/null; then
+        # Finds the root of the catkin workspace.
+        # Args:
+        #   dir (string): The starting directory that is within the workspace.
+        # Returns:
+        #   The workspace root directory or an empty string if not in a workspace.
         __rossrc_get_workspace_root() {
             local dir="$1"
             while [ "$dir" != "/" ]; do
@@ -47,6 +98,11 @@ rossrc() {
     fi
 
     if ! declare -f __rossrc_get_active_profile > /dev/null; then
+        # Retrieves the active catkin profile from profiles.yaml.
+        # Args:
+        #   ws_root (string): The workspace root directory.
+        # Returns:
+        #   The active profile name.
         __rossrc_get_active_profile() {
             local ws_root="$1"
             local profile_file="$ws_root/.catkin_tools/profiles/profiles.yaml"
@@ -59,6 +115,12 @@ rossrc() {
     fi
 
     if ! declare -f __rossrc_get_path_to_setup_dir > /dev/null; then
+        # Determines the correct setup directory based on the active profile.
+        # Args:
+        #   ws_root (string): The workspace root directory.
+        #   active_profile (string): The active profile name.
+        # Returns:
+        #   The setup directory path.
         __rossrc_get_path_to_setup_dir() {
             local ws_root="$1"
             echo "$ws_root/devel"
@@ -66,6 +128,11 @@ rossrc() {
     fi
 
     if ! declare -f __rosscr_get_setup_file > /dev/null; then
+        # Gets the full path to the setup.bash file.
+        # Args:
+        #   setup_dir (string): The setup directory.
+        # Returns:
+        #   The full path to setup.bash.
         __rosscr_get_setup_file() {
             local setup_dir="$1"
             echo "$setup_dir/setup.bash"

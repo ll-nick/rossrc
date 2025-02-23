@@ -1,3 +1,5 @@
+#!/bin/bash
+
 __rossrc_source_global_ros_env() {
     export ROS_DISTRO=testora
     GLOBAL_SOURCE_COUNTER=$((GLOBAL_SOURCE_COUNTER + 1))
