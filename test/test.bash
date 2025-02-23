@@ -44,7 +44,7 @@ test_outside_of_workspace() {
     return "$fail_count"
 }
 
-test_inside_of_actual_workspace() {
+test_switching_profiles() {
     fail_count=0
     trap '((fail_count++))' ERR
 
@@ -125,7 +125,7 @@ main() {
     test_setup
 
     run_test_case "rossrc outside of workspace" test_outside_of_workspace
-    run_test_case "rossrc inside a workspace" test_inside_of_actual_workspace
+    run_test_case "rossrc inside a workspace" test_switching_profiles
 
     cleanup
 
