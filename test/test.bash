@@ -59,20 +59,18 @@ mkdir -p "$IS_NOT_A_WORKSPACE_DIR/src"
 
 echo "== Running tests =="
 
-source "$(dirname "${BASH_SOURCE[0]}")/../rossrc.bash"
+source "$(dirname "${BASH_SOURCE[0]}")/rossrc.test.bash"
 
 expect_unset "ROS_DISTRO" "Global environment should not yet be sourced"
 
 cd "$IS_NOT_A_WORKSPACE_DIR" || return
 rossrc
-expect_set "ROS_DISTRO" "Global environment should be sourced"
-expect_equal "ROS_DISTRO" "noetic" "The global environment should be sourced with the correct ROS distro"
+expect_equal "ROS_DISTRO" "testora" "The global environment should be sourced with the correct ROS distro"
 expect_unset "ROS_WORKSPACE" "ROS_WORKSPACE should not be set when not in a workspace"
 
 cd "$IS_A_WORKSPACE_DIR" || return
 rossrc
-expect_set "ROS_DISTRO" "Global environment should be sourced"
-expect_equal "ROS_DISTRO" "noetic" "The global environment should be sourced with the correct ROS distro"
+expect_equal "ROS_DISTRO" "testora" "The global environment should be sourced with the correct ROS distro"
 expect_equal "ROS_WORKSPACE" "$IS_A_WORKSPACE_DIR" "ROS_WORKSPACE should be set to the current workspace"
 expect_equal "ROS_SETUP_FILE" "$IS_A_WORKSPACE_DIR/devel_debug/setup.bash" "ROS_SETUP_FILE should be set to the current workspace's setup.bash"
 expect_equal "SOURCED_DEVEL_DEBUG_SETUP" "1" "The setup bash should have been sourced successfully"
