@@ -1,5 +1,7 @@
 # 🧠 rossrc - Intelligent ROS Environment Sourcing
 
+[![Unit Test Status](https://img.shields.io/github/actions/workflow/status/ll-nick/rossrc/run-tests.yml?branch=main&label=tests)](https://github.com/ll-nick/rossrc/actions/workflows/run-tests.yml?query=branch%3Amain)
+
 `rossrc` is a lightweight Bash utility designed to intelligently source the appropriate ROS (Robot Operating System) environment only when required.
 
 The script ensures that the global ROS installation is sourced only when necessary and selects the correct workspace environment dynamically when working within a recognized ROS workspace.
