@@ -118,6 +118,56 @@ test_switching_profiles() {
     return "$fail_count"
 }
 
+test_multiple_workspaces() {
+    fail_count=0
+    trap '((fail_count++))' ERR
+
+    # Prepare base workspace structure
+    WORKSPACE_1="$TEST_DIR/test_ws_1"
+    mkdir -p "$WORKSPACE_1/.catkin_tools/profiles"
+    echo "active: release" > "$WORKSPACE_1/.catkin_tools/profiles/profiles.yaml"
+    mkdir -p "$WORKSPACE_1/devel"
+    DEVEL_SOURCE_COUNTER_1=0
+    echo "export DEVEL_SOURCE_COUNTER_1=$((DEVEL_SOURCE_COUNTER_1 + 1))" > "$WORKSPACE_1/devel/setup.bash"
+
+    WORKSPACE_2="$TEST_DIR/test_ws_2"
+    mkdir -p "$WORKSPACE_2/.catkin_tools/profiles"
+    echo "active: release" > "$WORKSPACE_2/.catkin_tools/profiles/profiles.yaml"
+    mkdir -p "$WORKSPACE_2/devel"
+    DEVEL_SOURCE_COUNTER_2=0
+    echo "export DEVEL_SOURCE_COUNTER_2=$((DEVEL_SOURCE_COUNTER_2 + 1))" > "$WORKSPACE_2/devel/setup.bash"
+
+    # Outside of workspace
+    expect_unset "ROS_DISTRO" "Global environment should not yet be sourced"
+    expect_unset "ROS_WORKSPACE" "ROS_WORKSPACE should not be set when not in a workspace"
+    expect_unset "ROS_SETUP_FILE" "ROS_SETUP_FILE should not be set when not in a workspace"
+    expect_equal "GLOBAL_SOURCE_COUNTER" "0" "The global environment should not have been sourced"
+    expect_equal "DEVEL_SOURCE_COUNTER_1" "0" "The setup bash for workspace 1 should not have been sourced"
+    expect_equal "DEVEL_SOURCE_COUNTER_2" "0" "The setup bash for workspace 2 should not have been sourced"
+
+    cd "$WORKSPACE_1" || return
+    rossrc
+
+    expect_equal "ROS_DISTRO" "testora" "The global environment should be sourced with the correct ROS distro"
+    expect_equal "GLOBAL_SOURCE_COUNTER" "1" "The global environment should have been sourced once"
+    expect_equal "ROS_WORKSPACE" "$WORKSPACE_1" "ROS_WORKSPACE should be set to the current workspace"
+    expect_equal "ROS_SETUP_FILE" "$WORKSPACE_1/devel/setup.bash" "ROS_SETUP_FILE should be set to the current workspace's setup.bash"
+    expect_equal "DEVEL_SOURCE_COUNTER_1" "1" "The setup bash for workspace 1 should have been sourced"
+    expect_equal "DEVEL_SOURCE_COUNTER_2" "0" "The setup bash for workspace 2 should not have been sourced"
+
+    cd "$WORKSPACE_2" || return
+    rossrc
+
+    expect_equal "ROS_DISTRO" "testora" "The global environment should be sourced with the correct ROS distro"
+    expect_equal "GLOBAL_SOURCE_COUNTER" "2" "The global environment should have been sourced again since the workspace changed"
+    expect_equal "ROS_WORKSPACE" "$WORKSPACE_2" "ROS_WORKSPACE should be set to the current workspace"
+    expect_equal "ROS_SETUP_FILE" "$WORKSPACE_2/devel/setup.bash" "ROS_SETUP_FILE should be set to the current workspace's setup.bash"
+    expect_equal "DEVEL_SOURCE_COUNTER_1" "1" "The setup bash for workspace 1 should not have been sourced again"
+    expect_equal "DEVEL_SOURCE_COUNTER_2" "1" "The setup bash for workspace 2 should have been sourced"
+
+    return "$fail_count"
+}
+
 main() {
     failed_test_cases=0
     trap '((failed_test_cases++))' ERR
@@ -128,6 +178,7 @@ main() {
 
     run_test_case "rossrc outside of workspace" test_outside_of_workspace
     run_test_case "rossrc inside a workspace" test_switching_profiles
+    run_test_case "rossrc with multiple workspaces" test_multiple_workspaces
 
     cleanup
 
