@@ -1,14 +1,11 @@
 #!/bin/bash
 
-FAIL_COUNT=0
-
 expect_unset() {
     local var_name="$1"
     eval "local var_value=\"\$$var_name\""
     local test_name="$2"
     if [ -n "$var_value" ]; then
         echo "❌ $test_name: Expected variable to be unset: $var_name"
-        ((FAIL_COUNT++))
         return 1
     fi
     echo "✅ $test_name"
@@ -22,7 +19,6 @@ expect_equal() {
     local test_name="$3"
     if [ "$var_value" != "$expected_value" ]; then
         echo "❌ $test_name: Expected variable to be '$expected_value', but got '$var_value'"
-        ((FAIL_COUNT++))
         return 1
     fi
     echo "✅ $test_name"
@@ -43,6 +39,10 @@ mkdir -p "$IS_A_WORKSPACE_DIR/some_other_dir"
 
 IS_NOT_A_WORKSPACE_DIR="$TEST_DIR/test_not_ws"
 mkdir -p "$IS_NOT_A_WORKSPACE_DIR/src"
+
+# Automatically count failures when a command returns non-zero
+fail_count=0
+trap '((FAIL_COUNT++))' ERR
 
 echo "== Running tests =="
 
@@ -75,14 +75,14 @@ echo "==============="
 echo " R E S U L T S"
 echo "==============="
 echo ""
-if [ "$FAIL_COUNT" -eq 0 ]; then
+if [ "$fail_count" -eq 0 ]; then
     echo "✅ All tests passed!"
     exit 0
-elif [ "$FAIL_COUNT" -eq 1 ]; then
-    echo "❌ $FAIL_COUNT test failed!"
+elif [ "$fail_count" -eq 1 ]; then
+    echo "❌ $fail_count test failed!"
     exit 1
 else
-    echo "❌ $FAIL_COUNT tests failed!"
+    echo "❌ $fail_count tests failed!"
     exit 1
 fi
 
