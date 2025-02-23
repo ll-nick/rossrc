@@ -1,27 +1,38 @@
-# 🧠 rossrc - Intelligent ROS Environment Sourcing
+# rossrc
 
+[![License](https://img.shields.io/github/license/ll-nick/rossrc)](./LICENSE)
 [![Unit Test Status](https://img.shields.io/github/actions/workflow/status/ll-nick/rossrc/run-tests.yml?branch=main&label=tests)](https://github.com/ll-nick/rossrc/actions/workflows/run-tests.yml?query=branch%3Amain)
 
-`rossrc` is a lightweight Bash utility designed to intelligently source the appropriate ROS (Robot Operating System) environment only when required.
+#### 🧠 Intelligent ROS Environment Sourcing
 
-The script ensures that the global ROS installation is sourced only when necessary and selects the correct workspace environment dynamically when working within a recognized ROS workspace.
-This can significantly reduce Bash startup time if you work with large ROS installations.
+`rossrc` is designed to intelligently source the correct ROS environment with just one command.
 
 ## ✨ Features
-- **Minimizes Shell Startup Overhead**: Only sources ROS when required for quick shell startup.
-- **Lightweight Workspace Detection**: Uses heuristics to quickly estimate if the current directory is within a ROS workspace.
-- **Prevents Redundant Sourcing**: Avoids re-sourcing the workspace if it has already been set up.
-- **Supports Customization**: Allows users to override internal functions for custom behavior.
-- **Workspace Switching Handling**: Detects when moving between different workspaces and properly reconfigures the environment.
-- **Automagic**: Source the provided cd hook to automatically source the workspace when changing directories.
+
+- ⏲  **Minimizes Shell Startup Overhead***  
+  Only sources ROS when required for quick shell startup.
+- 🧠 **Prevents Redundant Sourcing**  
+  Avoids re-sourcing the workspace if it has already been set up.
+- 👌 **Simple**  
+  There's just one command to remember: `rossrc`.
+- 🪶 **Lightweight**  
+  Uses a heuristic to only run if necessary.
+- 🔧 **Customizable**  
+  Allows users to override internal functions for custom behavior.
+- 🪄 **Automagic**  
+  Source the provided `cd` hook to automatically source workspaces when changing directories.
+
+*On my machine, sourcing the ROS installation takes roughly 720ms.
+Sourcing this script takes about 2ms.
 
 ## 🚀 Usage
 
-Whenever you want to source the ROS environment, simply run the `rossrc` command.
-If you are already in a workspace, it will source the workspace environment.
-If you sourced the cd hook, you actually don't need to do anything, simple `cd` into your workspace and the environment will be sourced automatically.
+Run `rossrc` if you need ROS commands.
+If you are in a workspace, it will source that one too.
+To force re-sourcing of the workspace (e.g. after adding new packages), use the `-f` or `--force` flag.
+That's it!*
 
-To force re-sourcing of the workspace (e.g. after adding new packages), use the `-f` or `--force` option.
+*Unless you installed the `cd` hook. In that case you don't really have to do anything.
 
 ## ⚡️ Assumptions
 
@@ -100,6 +111,6 @@ source ~/.rossrc/cd_hook.bash
 ```
 </details>
 
-## License
+## 📃 License
 This project is released under the MIT License.
 
