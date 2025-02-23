@@ -6,6 +6,15 @@ rossrc() {
         source /opt/mrtsoftware/setup.bash
         source /opt/mrtros/setup.bash
     }
+
+    is_within_workspace_heuristic() {
+        local ws_dir="$1"
+        if [[ "$ws_dir" != *_ws* ]]; then
+            return 1
+        fi
+        return 0
+    }
+
     # Source global ROS setup if not already sourced
     # TODO: Make sourcing the global env a configurable function to make this tool more generic
     # (e.g. if not global_env() then global_env_default())
@@ -16,7 +25,8 @@ rossrc() {
     ws_dir=$(pwd)
 
     # Not a catkin workspace if not in a directory with _ws in the name
-    if [[ "$ws_dir" != *_ws* ]]; then
+    # Replace with function:
+    if ! is_within_workspace_heuristic "$ws_dir"; then
         return
     fi
 
