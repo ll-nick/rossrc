@@ -2,7 +2,8 @@ run_test_case() {
     local test_case_name="$1"
     shift
     echo "--------------------------------"
-    echo "🔹 Running test: $test_case_name..."
+    echo "🔹 Running test case \"$test_case_name\"..."
+    echo "---"
     (
         fail_count=0
         trap '((fail_count++))' ERR
@@ -10,12 +11,13 @@ run_test_case() {
         return "$fail_count"
     )
     fail_count="$?"
+    echo "---"
     if [ "$fail_count" -eq 0 ]; then
-        echo "✅ $test_case_name passed!"
+        echo "✅ Test case \"$test_case_name\" passed!"
         echo "--------------------------------"
         return 0
     else
-        echo "❌ $test_case_name failed!"
+        echo "❌ Test case \"$test_case_name\" failed!"
         echo "--------------------------------"
         return 1
     fi
