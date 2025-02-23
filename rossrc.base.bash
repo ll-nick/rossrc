@@ -95,7 +95,7 @@ rossrc() {
         local active_profile
         active_profile=$(__rossrc_get_active_profile "$ws_root")
         local setup_script_dir
-        setup_script_dir=$(__rossrc_get_path_to_setup_dir "$ws_root")
+        setup_script_dir=$(__rossrc_get_path_to_setup_dir "$ws_root" "$active_profile")
         local setup_file
         setup_file=$(__rosscr_get_setup_file "$setup_script_dir")
 

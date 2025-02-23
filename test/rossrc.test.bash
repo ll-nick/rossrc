@@ -5,15 +5,11 @@ __rossrc_source_global_ros_env() {
 
 __rossrc_get_path_to_setup_dir() {
     local ws_root="$1"
-    local profile_file="$ws_root/.catkin_tools/profiles/profiles.yaml"
+    local active_profile="$2"
     local setup_dir="devel"
 
-    if [ -f "$profile_file" ]; then
-        local active_profile
-        active_profile=$(sed 's/active: //' < "$profile_file")
-        if [ "$active_profile" != "release" ]; then
-            setup_dir="devel_$active_profile"
-        fi
+    if [ "$active_profile" != "release" ]; then
+        setup_dir="devel_$active_profile"
     fi
     echo "$ws_root/$setup_dir"
 }
