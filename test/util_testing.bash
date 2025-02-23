@@ -17,7 +17,6 @@ expect_unset() {
         echo "❌ $test_name: Expected variable to be unset: $var_name"
         return 1
     fi
-    echo "✅ $test_name"
     return 0
 }
 
@@ -30,7 +29,6 @@ expect_equal() {
         echo "❌ $test_name: Expected variable to be '$expected_value', but got '$var_value'"
         return 1
     fi
-    echo "✅ $test_name"
     return 0
 }
 
