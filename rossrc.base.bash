@@ -8,7 +8,6 @@ if ! declare -f __rossrc_is_within_workspace_heuristic > /dev/null; then
     }
 fi
 
-#TODO: What if workspace packages changes?
 rossrc() {
     if ! declare -f __rossrc_source_global_ros_env > /dev/null; then
         __rossrc_source_global_ros_env() {
@@ -74,6 +73,28 @@ rossrc() {
     fi
 
     main() {
+        local force_source=0
+
+        # Parse command-line arguments
+        for arg in "$@"; do
+            case "$arg" in
+            --force | -f) force_source=1 ;;
+            --help)
+                echo "Usage: rossrc [OPTIONS]"
+                echo "Source the current workspace and the global ROS installation if necessary."
+                echo
+                echo "Options:"
+                echo "  -f, --force    Source the current workspace even if it is already sourced."
+                echo "  --help         Show this help message."
+                return 0
+                ;;
+            *)
+                echo "Unknown option: $arg"
+                return 1
+                ;;
+            esac
+        done
+
         # Source the ROS installation if not already done
         if [ -z "$ROS_DISTRO" ]; then
             echo "Sourcing global environment..."
@@ -99,8 +120,8 @@ rossrc() {
         local setup_file
         setup_file=$(__rosscr_get_setup_file "$setup_script_dir")
 
-        # No need to re-source if the setup file is already sourced
-        if [ "$ROS_SETUP_FILE" == "$setup_file" ]; then
+        # No need to re-source if the setup file is already sourced unless forced
+        if [[ $force_source -eq 0 && "$ROS_SETUP_FILE" == "$setup_file" ]]; then
             return
         fi
         # If the workspace changed, re-source the global setup to avoid workspace overlaying
