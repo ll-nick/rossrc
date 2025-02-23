@@ -1,3 +1,4 @@
+#TODO: Split into smaller functions
 rossrc() {
     ws_dir=$(pwd)
 
@@ -7,6 +8,7 @@ rossrc() {
     fi
 
     # Walk up the directory tree to find workspace root
+    # TODO: Remove while loop, just cut path after _ws
     while [ "$ws_dir" != "/" ]; do
         if [ ! -d "$ws_dir/.catkin_tools" ]; then
             ws_dir=$(dirname "$ws_dir")
@@ -14,6 +16,9 @@ rossrc() {
         fi
 
         # Source global ROS setup if not already sourced
+        # TODO: Source this, even if not in a workspace in case the function was manually invoked
+        # TODO: Make sourcing the global env a configurable function to make this tool more generic
+        # (e.g. if not global_env() then global_env_default())
         if [ -z "$ROS_DISTRO" ]; then
             echo "Sourcing mrtsoftware and mrtros..."
             source /opt/mrtsoftware/setup.bash
@@ -21,6 +26,7 @@ rossrc() {
         fi
 
         # Determine the active profile
+        # TODO: Make the devel dir function configurable
         local profile_file="$ws_dir/.catkin_tools/profiles/profiles.yaml"
         local devel_dir="devel"
         if [ -f "$profile_file" ]; then
@@ -32,6 +38,7 @@ rossrc() {
         fi
 
         # Source the correct setup file
+        # TODO: If the workspace changed, re-source the global setup (but not if only the profile changed)
         local setup_file="$ws_dir/$devel_dir/setup.bash"
 
         # Avoid re-sourcing if already in the same workspace
