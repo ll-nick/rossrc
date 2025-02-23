@@ -25,6 +25,7 @@ test_outside_of_workspace() {
     expect_unset "ROS_DISTRO" "Global environment should not yet be sourced"
     expect_unset "ROS_WORKSPACE" "ROS_WORKSPACE should not be set when not in a workspace"
     expect_unset "ROS_SETUP_FILE" "ROS_SETUP_FILE should not be set when not in a workspace"
+    expect_equal "GLOBAL_SOURCE_COUNTER" "0" "The global environment should not have been sourced"
 
     cd "$IS_NOT_A_WORKSPACE_DIR" || return
     rossrc
@@ -32,6 +33,13 @@ test_outside_of_workspace() {
     expect_equal "ROS_DISTRO" "testora" "The global environment should be sourced with the correct ROS distro"
     expect_unset "ROS_WORKSPACE" "ROS_WORKSPACE should not be set when not in a workspace"
     expect_unset "ROS_SETUP_FILE" "ROS_SETUP_FILE should not be set when not in a workspace"
+    expect_equal "GLOBAL_SOURCE_COUNTER" "1" "The global environment should have been sourced once"
+
+    rossrc
+    expect_equal "ROS_DISTRO" "testora" "The global environment should be sourced with the correct ROS distro"
+    expect_unset "ROS_WORKSPACE" "ROS_WORKSPACE should not be set when not in a workspace"
+    expect_unset "ROS_SETUP_FILE" "ROS_SETUP_FILE should not be set when not in a workspace"
+    expect_equal "GLOBAL_SOURCE_COUNTER" "1" "The global environment should have been sourced once"
 
     return "$fail_count"
 }
@@ -53,17 +61,21 @@ test_inside_of_actual_workspace() {
     expect_unset "ROS_DISTRO" "Global environment should not yet be sourced"
     expect_unset "ROS_WORKSPACE" "ROS_WORKSPACE should not be set when not in a workspace"
     expect_unset "ROS_SETUP_FILE" "ROS_SETUP_FILE should not be set when not in a workspace"
+    expect_equal "GLOBAL_SOURCE_COUNTER" "0" "The global environment should not have been sourced"
 
     cd "$IS_A_WORKSPACE_DIR" || return
     rossrc
 
     expect_equal "ROS_DISTRO" "testora" "The global environment should be sourced with the correct ROS distro"
+    expect_equal "GLOBAL_SOURCE_COUNTER" "1" "The global environment should have been sourced once"
     expect_equal "ROS_WORKSPACE" "$IS_A_WORKSPACE_DIR" "ROS_WORKSPACE should be set to the current workspace"
     expect_equal "ROS_SETUP_FILE" "$IS_A_WORKSPACE_DIR/devel_debug/setup.bash" "ROS_SETUP_FILE should be set to the current workspace's setup.bash"
     expect_equal "SOURCED_DEVEL_DEBUG_SETUP" "1" "The setup bash should have been sourced successfully"
 
+    # Change the active profile and re-source
     echo "active: release" > "$IS_A_WORKSPACE_DIR/.catkin_tools/profiles/profiles.yaml"
     rossrc
+    expect_equal "GLOBAL_SOURCE_COUNTER" "1" "The global environment should have been sourced once"
     expect_equal "ROS_WORKSPACE" "$IS_A_WORKSPACE_DIR" "ROS_WORKSPACE should be set to the current workspace"
     expect_equal "ROS_SETUP_FILE" "$IS_A_WORKSPACE_DIR/devel/setup.bash" "ROS_SETUP_FILE should be set to the current workspace's setup.bash"
     expect_equal "SOURCED_DEVEL_SETUP" "1" "The setup bash should have been sourced successfully"
