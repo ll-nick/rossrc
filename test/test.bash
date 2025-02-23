@@ -1,4 +1,6 @@
 #!/bin/bash
+# shellcheck disable=SC2317  # Don't warn about unreachable commands in this function
+# shellcheck disable=SC2119  # Don't warn about not passing values to rossrc
 
 source "$(dirname "${BASH_SOURCE[0]}")/util_testing.bash"
 
