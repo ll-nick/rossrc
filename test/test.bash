@@ -25,7 +25,7 @@ test_setup() {
     source "$(dirname "${BASH_SOURCE[0]}")/rossrc.test.bash"
 }
 
-echo "== Running tests =="
+print_header
 
 test_setup
 
@@ -49,7 +49,7 @@ expect_equal "ROS_WORKSPACE" "$IS_A_WORKSPACE_DIR" "ROS_WORKSPACE should be set 
 expect_equal "ROS_SETUP_FILE" "$IS_A_WORKSPACE_DIR/devel/setup.bash" "ROS_SETUP_FILE should be set to the current workspace's setup.bash"
 expect_equal "SOURCED_DEVEL_SETUP" "1" "The setup bash should have been sourced successfully"
 
-test_summary "$fail_count"
+print_test_summary "$fail_count"
 
 if [ "$fail_count" -eq 0 ]; then
     exit 0

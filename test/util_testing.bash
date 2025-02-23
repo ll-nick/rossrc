@@ -23,13 +23,21 @@ expect_equal() {
     return 0
 }
 
-test_summary() {
+print_header() {
+    echo ""
+    echo "============================"
+    echo " 🚀 R O S S R C  T E S T S "
+    echo "============================"
+    echo ""
+}
+
+print_test_summary() {
     local fail_count="$1"
     rm -rf "$TEST_DIR"  # Cleanup
     echo ""
-    echo "==============="
-    echo " R E S U L T S"
-    echo "==============="
+    echo "=================="
+    echo " 🔍 R E S U L T S"
+    echo "=================="
     echo ""
     if [ "$fail_count" -eq 0 ]; then
         echo "✅ All tests passed!"
@@ -38,4 +46,6 @@ test_summary() {
     else
         echo "❌ $fail_count tests failed!"
     fi
+    echo ""
+    echo "=================="
 }
