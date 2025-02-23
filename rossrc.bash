@@ -1,7 +1,7 @@
 #TODO: Split into smaller functions
 #TODO: What if workspace packages changes?
 rossrc() {
-    source_global_env() {
+    source_global_ros_env() {
         source /opt/mrtsoftware/setup.bash
         source /opt/mrtros/setup.bash
     }
@@ -61,7 +61,7 @@ rossrc() {
     # (e.g. if not global_env() then global_env_default())
     if [ -z "$ROS_DISTRO" ]; then
         echo "Sourcing global environment..."
-        source_global_env
+        source_global_ros_env
     fi
 
     # If heuristic is not satisfied, we can return early
