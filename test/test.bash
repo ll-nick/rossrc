@@ -189,6 +189,14 @@ test_cd_hook() {
     expect_equal "GLOBAL_SOURCE_COUNTER" "0" "The global environment should not have been sourced"
     expect_equal "DEVEL_SOURCE_COUNTER" "0" "The setup bash should not have been sourced"
 
+    # Outside of a workspace the cd hook should not do anything
+    cd "$TEST_DIR" || return
+    expect_unset "ROS_DISTRO" "Global environment should not yet be sourced"
+    expect_unset "ROS_WORKSPACE" "ROS_WORKSPACE should not be set when not in a workspace"
+    expect_unset "ROS_SETUP_FILE" "ROS_SETUP_FILE should not be set when not in a workspace"
+    expect_equal "GLOBAL_SOURCE_COUNTER" "0" "The global environment should not have been sourced"
+    expect_equal "DEVEL_SOURCE_COUNTER" "0" "The setup bash should not have been sourced"
+
     # No need to run rossrc with the cd hook
     cd "$WORKSPACE" || return
     expect_equal "ROS_DISTRO" "testora" "The global environment should be sourced with the correct ROS distro"
