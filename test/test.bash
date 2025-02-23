@@ -55,13 +55,13 @@ test_switching_profiles() {
 
     # Prepare devel dir
     mkdir -p "$IS_A_WORKSPACE_DIR/devel"
-    DEVEL_SOURCE_COUNTER=0
-    echo "export DEVEL_SOURCE_COUNTER=$((DEVEL_SOURCE_COUNTER + 1))" > "$IS_A_WORKSPACE_DIR/devel/setup.bash"
+    export DEVEL_SOURCE_COUNTER=0
+    echo "export DEVEL_SOURCE_COUNTER=\$((DEVEL_SOURCE_COUNTER + 1))" > "$IS_A_WORKSPACE_DIR/devel/setup.bash"
 
     # Prepare devel_debug dir
     mkdir -p "$IS_A_WORKSPACE_DIR/devel_debug"
-    DEVEL_DEBUG_SOURCE_COUNTER=0
-    echo "export DEVEL_DEBUG_SOURCE_COUNTER=$((DEVEL_DEBUG_SOURCE_COUNTER + 1))" > "$IS_A_WORKSPACE_DIR/devel_debug/setup.bash"
+    export DEVEL_DEBUG_SOURCE_COUNTER=0
+    echo "export DEVEL_DEBUG_SOURCE_COUNTER=\$((DEVEL_DEBUG_SOURCE_COUNTER + 1))" > "$IS_A_WORKSPACE_DIR/devel_debug/setup.bash"
 
     # Outside of workspace
     expect_unset "ROS_DISTRO" "Global environment should not yet be sourced"
@@ -127,15 +127,15 @@ test_multiple_workspaces() {
     mkdir -p "$WORKSPACE_1/.catkin_tools/profiles"
     echo "active: release" > "$WORKSPACE_1/.catkin_tools/profiles/profiles.yaml"
     mkdir -p "$WORKSPACE_1/devel"
-    DEVEL_SOURCE_COUNTER_1=0
-    echo "export DEVEL_SOURCE_COUNTER_1=$((DEVEL_SOURCE_COUNTER_1 + 1))" > "$WORKSPACE_1/devel/setup.bash"
+    export DEVEL_SOURCE_COUNTER_1=0
+    echo "export DEVEL_SOURCE_COUNTER_1=\$((DEVEL_SOURCE_COUNTER_1 + 1))" > "$WORKSPACE_1/devel/setup.bash"
 
     WORKSPACE_2="$TEST_DIR/test_ws_2"
     mkdir -p "$WORKSPACE_2/.catkin_tools/profiles"
     echo "active: release" > "$WORKSPACE_2/.catkin_tools/profiles/profiles.yaml"
     mkdir -p "$WORKSPACE_2/devel"
-    DEVEL_SOURCE_COUNTER_2=0
-    echo "export DEVEL_SOURCE_COUNTER_2=$((DEVEL_SOURCE_COUNTER_2 + 1))" > "$WORKSPACE_2/devel/setup.bash"
+    export DEVEL_SOURCE_COUNTER_2=0
+    echo "export DEVEL_SOURCE_COUNTER_2=\$((DEVEL_SOURCE_COUNTER_2 + 1))" > "$WORKSPACE_2/devel/setup.bash"
 
     # Outside of workspace
     expect_unset "ROS_DISTRO" "Global environment should not yet be sourced"
@@ -179,8 +179,8 @@ test_cd_hook() {
     mkdir -p "$WORKSPACE/.catkin_tools/profiles"
     echo "active: release" > "$WORKSPACE/.catkin_tools/profiles/profiles.yaml"
     mkdir -p "$WORKSPACE/devel"
-    DEVEL_SOURCE_COUNTER=0
-    echo "export DEVEL_SOURCE_COUNTER=$((DEVEL_SOURCE_COUNTER + 1))" > "$WORKSPACE/devel/setup.bash"
+    export DEVEL_SOURCE_COUNTER=0
+    echo "export DEVEL_SOURCE_COUNTER=\$((DEVEL_SOURCE_COUNTER + 1))" > "$WORKSPACE/devel/setup.bash"
 
     # Outside of workspace
     expect_unset "ROS_DISTRO" "Global environment should not yet be sourced"
