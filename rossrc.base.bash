@@ -46,7 +46,7 @@ rossrc() {
         }
     fi
 
-    if ! declare -f __rossrc_get_devel_dir > /dev/null; then
+    if ! declare -f __rossrc_get_path_to_setup_dir > /dev/null; then
         __rossrc_get_path_to_setup_dir() {
             local ws_root="$1"
             echo "$ws_root/devel"
