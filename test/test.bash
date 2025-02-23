@@ -61,17 +61,21 @@ test_inside_of_actual_workspace() {
     expect_equal "SOURCED_DEVEL_SETUP" "1" "The setup bash should have been sourced successfully"
 }
 
-print_header
+main() {
+    print_header
 
-test_setup
+    test_setup
 
-run_test_case "rossrc outside of workspace" test_outside_of_workspace
-run_test_case "rossrc inside a workspace" test_inside_of_actual_workspace
+    run_test_case "rossrc outside of workspace" test_outside_of_workspace
+    run_test_case "rossrc inside a workspace" test_inside_of_actual_workspace
 
-print_test_summary "$fail_count"
+    print_test_summary "$fail_count"
 
-if [ "$fail_count" -eq 0 ]; then
-    exit 0
-else
-    exit 1
-fi
+    if [ "$fail_count" -eq 0 ]; then
+        exit 0
+    else
+        exit 1
+    fi
+}
+
+main
