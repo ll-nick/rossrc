@@ -1,4 +1,3 @@
-#TODO: Split into smaller functions
 #TODO: What if workspace packages changes?
 rossrc() {
     if ! declare -f __rossrc_source_global_ros_env > /dev/null; then
@@ -68,50 +67,54 @@ rossrc() {
         }
     fi
 
-    # Source global ROS setup if not already sourced
-    # TODO: Make sourcing the global env a configurable function to make this tool more generic
-    # (e.g. if not global_env() then global_env_default())
-    if [ -z "$ROS_DISTRO" ]; then
-        echo "Sourcing global environment..."
-        __rossrc_source_global_ros_env
-    fi
+    main() {
+        # Source global ROS setup if not already sourced
+        # TODO: Make sourcing the global env a configurable function to make this tool more generic
+        # (e.g. if not global_env() then global_env_default())
+        if [ -z "$ROS_DISTRO" ]; then
+            echo "Sourcing global environment..."
+            __rossrc_source_global_ros_env
+        fi
 
-    # If heuristic is not satisfied, we can return early
-    if ! __rossrc_is_within_workspace_heuristic "$(pwd)"; then
-        return
-    fi
+        # If heuristic is not satisfied, we can return early
+        if ! __rossrc_is_within_workspace_heuristic "$(pwd)"; then
+            return
+        fi
 
-    # Walk up the directory tree to find workspace root
-    # TODO: Remove while loop, just cut path after _ws
-    local ws_root
-    ws_root=$(__rossrc_get_workspace_root "$(pwd)")
-    if [ -z "$ws_root" ]; then
-        return
-    fi
+        # Walk up the directory tree to find workspace root
+        # TODO: Remove while loop, just cut path after _ws
+        local ws_root
+        ws_root=$(__rossrc_get_workspace_root "$(pwd)")
+        if [ -z "$ws_root" ]; then
+            return
+        fi
 
-    # Determine the active profile
-    # TODO: Make the devel dir function configurable
-    local devel_dir
-    devel_dir=$(__rossrc_get_devel_dir "$ws_root")
+        # Determine the active profile
+        # TODO: Make the devel dir function configurable
+        local devel_dir
+        devel_dir=$(__rossrc_get_devel_dir "$ws_root")
 
-    # Source the correct setup file
-    # TODO: If the workspace changed, re-source the global setup (but not if only the profile changed)
-    local setup_file
-    setup_file=$(__rosscr_get_setup_file "$ws_root" "$devel_dir")
+        # Source the correct setup file
+        # TODO: If the workspace changed, re-source the global setup (but not if only the profile changed)
+        local setup_file
+        setup_file=$(__rosscr_get_setup_file "$ws_root" "$devel_dir")
 
-    # Avoid re-sourcing if already in the same workspace
-    if [ "$ROS_SETUP_FILE" == "$setup_file" ]; then
-        echo "Aldready sourced workspace: $ws_root (profile: $active_profile)"
-        return
-    fi
+        # Avoid re-sourcing if already in the same workspace
+        if [ "$ROS_SETUP_FILE" == "$setup_file" ]; then
+            echo "Aldready sourced workspace: $ws_root (profile: $active_profile)"
+            return
+        fi
 
-    # Store the new workspace path
-    export ROS_SETUP_FILE="$setup_file"
-    export ROS_WORKSPACE="$ws_root"
-    if [ -f "$setup_file" ]; then
-        echo "Sourcing workspace: $setup_file (profile: $active_profile)"
-        source "$setup_file"
-    else
-        echo "No valid setup.bash found for profile ($active_profile)."
-    fi
+        # Store the new workspace path
+        export ROS_SETUP_FILE="$setup_file"
+        export ROS_WORKSPACE="$ws_root"
+        if [ -f "$setup_file" ]; then
+            echo "Sourcing workspace: $setup_file (profile: $active_profile)"
+            source "$setup_file"
+        else
+            echo "No valid setup.bash found for profile ($active_profile)."
+        fi
+    }
+
+    main "$@"
 }
