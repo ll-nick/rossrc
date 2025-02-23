@@ -79,11 +79,8 @@ rossrc() {
             return
         fi
 
-        # Determine the directory containing the setup script
         local setup_script_dir
         setup_script_dir=$(__rossrc_get_path_to_setup_dir "$ws_root")
-
-        # Determine the path to the setup script
         local setup_file
         setup_file=$(__rosscr_get_setup_file "$setup_script_dir")
 
@@ -98,7 +95,6 @@ rossrc() {
             __rossrc_source_global_ros_env
         fi
 
-        # Try sourcing the setup file
         if [ -f "$setup_file" ]; then
             echo "Sourcing workspace: $setup_file (profile: $active_profile)"
             source "$setup_file"
@@ -107,7 +103,6 @@ rossrc() {
             return
         fi
 
-        # Store the sourced setup file and workspace root
         export ROS_SETUP_FILE="$setup_file"
         export ROS_WORKSPACE="$ws_root"
     }
