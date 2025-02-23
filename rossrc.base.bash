@@ -2,8 +2,11 @@
 rossrc() {
     if ! declare -f __rossrc_source_global_ros_env > /dev/null; then
         __rossrc_source_global_ros_env() {
-            source /opt/mrtsoftware/setup.bash
-            source /opt/mrtros/setup.bash
+            local global_setup_file="/opt/ros/noetic/setup.bash"
+            if [ ! -f "$global_setup_file" ]; then
+                echo "No ROS installation found at $global_setup_file"
+            fi
+            source "$global_setup_file"
         }
     fi
 
@@ -38,24 +41,15 @@ rossrc() {
                 echo "$dir"
                 return
             done
-            echo ""  # Return an empty string if no workspace is found
+            # No workspace found
+            echo ""
         }
     fi
 
     if ! declare -f __rossrc_get_devel_dir > /dev/null; then
         __rossrc_get_path_to_setup_dir() {
             local ws_root="$1"
-            local profile_file="$ws_root/.catkin_tools/profiles/profiles.yaml"
-            local setup_dir="devel"
-
-            if [ -f "$profile_file" ]; then
-                local active_profile
-                active_profile=$(sed 's/active: //' < "$profile_file")
-                if [ "$active_profile" != "release" ]; then
-                    setup_dir="devel_$active_profile"
-                fi
-            fi
-            echo "$ws_root/$setup_dir"
+            echo "$ws_root/devel"
         }
     fi
 
