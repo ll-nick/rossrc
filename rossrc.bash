@@ -43,7 +43,7 @@ rossrc() {
     fi
 
     if ! declare -f __rossrc_get_devel_dir > /dev/null; then
-        __rossrc_get_setup_dir() {
+        __rossrc_get_path_to_setup_dir() {
             local ws_root="$1"
             local profile_file="$ws_root/.catkin_tools/profiles/profiles.yaml"
             local setup_dir="devel"
@@ -55,15 +55,14 @@ rossrc() {
                     setup_dir="devel_$active_profile"
                 fi
             fi
-            echo "$setup_dir"
+            echo "$ws_root/$setup_dir"
         }
     fi
 
     if ! declare -f __rosscr_get_setup_file > /dev/null; then
         __rosscr_get_setup_file() {
-            local ws_root="$1"
-            local devel_dir="$2"
-            echo "$ws_root/$devel_dir/setup.bash"
+            local setup_dir="$1"
+            echo "$setup_dir/setup.bash"
         }
     fi
 
@@ -88,11 +87,11 @@ rossrc() {
 
         # Determine the directory containing the setup script
         local setup_script_dir
-        setup_script_dir=$(__rossrc_get_setup_dir "$ws_root")
+        setup_script_dir=$(__rossrc_get_path_to_setup_dir "$ws_root")
 
         # Determine the path to the setup script
         local setup_file
-        setup_file=$(__rosscr_get_setup_file "$ws_root" "$setup_script_dir")
+        setup_file=$(__rosscr_get_setup_file "$setup_script_dir")
 
         # Avoid re-sourcing if already in the same workspace
         # TODO: If the workspace changed, re-source the global setup (but not if only the profile changed)
