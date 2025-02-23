@@ -1,13 +1,16 @@
 #TODO: Split into smaller functions
 #TODO: What if workspace packages changes?
 rossrc() {
+    source_global_env() {
+        echo "Sourcing global environment..."
+        source /opt/mrtsoftware/setup.bash
+        source /opt/mrtros/setup.bash
+    }
     # Source global ROS setup if not already sourced
     # TODO: Make sourcing the global env a configurable function to make this tool more generic
     # (e.g. if not global_env() then global_env_default())
     if [ -z "$ROS_DISTRO" ]; then
-        echo "Sourcing mrtsoftware and mrtros..."
-        source /opt/mrtsoftware/setup.bash
-        source /opt/mrtros/setup.bash
+        source_global_env
     fi
 
     ws_dir=$(pwd)
