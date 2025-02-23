@@ -111,7 +111,7 @@ rossrc() {
         fi
 
         if [ -f "$setup_file" ]; then
-            echo "Sourcing workspace: $setup_file (profile: $active_profile)"
+            echo "Sourcing workspace: $ws_root (profile: $active_profile)"
             source "$setup_file"
         else
             echo "No valid setup.bash found for profile ($active_profile)."
