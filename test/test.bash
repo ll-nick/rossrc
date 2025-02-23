@@ -71,8 +71,8 @@ test_inside_of_actual_workspace() {
 }
 
 main() {
-    fail_count=0
-    trap '((fail_count++))' ERR
+    failed_test_cases=0
+    trap '((failed_test_cases++))' ERR
 
     print_header
 
@@ -83,9 +83,9 @@ main() {
 
     cleanup
 
-    print_test_summary "$fail_count"
+    print_test_summary "$failed_test_cases"
 
-    if [ "$fail_count" -eq 0 ]; then
+    if [ "$failed_test_cases" -eq 0 ]; then
         exit 0
     else
         exit 1
