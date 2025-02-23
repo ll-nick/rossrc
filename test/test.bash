@@ -104,7 +104,6 @@ test_switching_profiles() {
     expect_equal "DEVEL_SOURCE_COUNTER" "1" "The setup bash should not have been sourced again"
     expect_equal "DEVEL_DEBUG_SOURCE_COUNTER" "1" "The setup bash should have been sourced successfully"
 
-    # Sourcing again shouldn't change anything
     # Sourcing again shouldn't change anything, even when in a different directory
     cd "$IS_A_WORKSPACE_DIR/some_other_dir" || return
     rossrc
@@ -159,7 +158,7 @@ test_multiple_workspaces() {
     rossrc
 
     expect_equal "ROS_DISTRO" "testora" "The global environment should be sourced with the correct ROS distro"
-    expect_equal "GLOBAL_SOURCE_COUNTER" "2" "The global environment should have been sourced again since the workspace changed"
+    expect_equal "GLOBAL_SOURCE_COUNTER" "1" "The global environment should have been only be sourced once"
     expect_equal "ROS_WORKSPACE" "$WORKSPACE_2" "ROS_WORKSPACE should be set to the current workspace"
     expect_equal "ROS_SETUP_FILE" "$WORKSPACE_2/devel/setup.bash" "ROS_SETUP_FILE should be set to the current workspace's setup.bash"
     expect_equal "DEVEL_SOURCE_COUNTER_1" "1" "The setup bash for workspace 1 should not have been sourced again"
