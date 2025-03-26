@@ -1,6 +1,11 @@
 #!/bin/bash
 
+mrt() {
+    unset -f mrt && rossrc && mrt "$@"
+}
+
 __rossrc_source_global_ros_env() {
+    unset -f mrt
     source /opt/mrtsoftware/setup.bash
     source /opt/mrtros/setup.bash
 }
